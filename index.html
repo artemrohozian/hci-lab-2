@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Мультиварка: вибір режиму приготування</title>
+    <style>
+        :root {
+            --bg: #f5f4ef;
+            --surface: #fff;
+            --card: #f1efe8;
+            --text: #1f1e1c;
+            --muted: #5f5e5a;
+            --border: #d3d1c7;
+            --accent: #185fa5;
+            --accent-bg: #e6f1fb;
+            --ok: #27500a;
+            --ok-bg: #eaf3de;
+            --warn: #854f0b;
+            --danger: #a32d2d
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text)
+        }
+
+        main {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 20px 16px 40px
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 500;
+            margin: 0 0 4px
+        }
+
+        h2 {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0 0 10px
+        }
+
+        .sub {
+            font-size: 13px;
+            color: var(--muted);
+            margin: 0 0 16px
+        }
+
+        button {
+            font: inherit;
+            color: inherit;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer
+        }
+
+        button:hover {
+            background: var(--card)
+        }
+
+        button:active {
+            transform: scale(.98)
+        }
+
+        button:focus-visible,
+        input:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0 0 12px
+        }
+
+        .tab[aria-pressed=true] {
+            background: var(--accent-bg);
+            color: var(--accent);
+            border-color: var(--accent)
+        }
+
+        .chk {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 13px;
+            color: var(--muted);
+            margin: 0 0 14px
+        }
+
+        .chk label {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            cursor: pointer
+        }
+
+        .dev {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            max-width: 520px;
+            margin: 0 auto
+        }
+
+        .scr {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            min-height: 300px
+        }
+
+        .big {
+            width: 100%;
+            height: 60px;
+            font-size: 15px
+        }
+
+        .start {
+            height: 64px;
+            background: var(--ok-bg);
+            color: var(--ok);
+            border-color: var(--ok)
+        }
+
+        .lbl {
+            font-size: 12px;
+            color: var(--muted);
+            margin: 10px 0 6px
+        }
+
+        .step {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 8px
+        }
+
+        .g1 {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px
+        }
+
+        .g3 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px
+        }
+
+        .list {
+            display: grid;
+            gap: 8px
+        }
+
+        .dish {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 52px;
+            text-align: left
+        }
+
+        .dish small {
+            color: var(--muted)
+        }
+
+        .stp {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0
+        }
+
+        .stp button {
+            width: 80px;
+            height: 60px;
+            font-size: 20px
+        }
+
+        .stp div {
+            flex: 1;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 500
+        }
+
+        .lcd {
+            background: var(--ok-bg);
+            color: var(--ok);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: ui-monospace, Consolas, monospace;
+            min-height: 110px
+        }
+
+        .knobrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 16px 0 6px
+        }
+
+        .knobrow>button {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            font-size: 20px
+        }
+
+        .run {
+            text-align: center;
+            padding: 40px 0
+        }
+
+        .run b {
+            display: block;
+            font-size: 18px;
+            font-weight: 500;
+            margin: 8px 0
+        }
+
+        .run span {
+            display: block;
+            color: var(--muted);
+            margin: 6px 0 18px
+        }
+
+        .err {
+            font-size: 13px;
+            color: var(--danger);
+            margin-top: 6px
+        }
+
+        .show-fitts [data-law=fitts],
+        .show-hick [data-law=hick] {
+            position: relative;
+            outline: 2px dashed;
+            outline-offset: 3px
+        }
+
+        .show-fitts [data-law=fitts] {
+            outline-color: var(--accent)
+        }
+
+        .show-hick [data-law=hick] {
+            outline-color: var(--warn)
+        }
+
+        .show-fitts [data-law=fitts]::after,
+        .show-hick [data-law=hick]::after {
+            content: attr(data-label);
+            position: absolute;
+            top: -10px;
+            left: 8px;
+            font-size: 11px;
+            padding: 0 4px;
+            background: var(--surface);
+            z-index: 2;
+            white-space: nowrap
+        }
+
+        .show-fitts [data-law=fitts]::after {
+            color: var(--accent)
+        }
+
+        .show-hick [data-law=hick]::after {
+            color: var(--warn)
+        }
+
+        #goms {
+            margin-top: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px
+        }
+
+        .ops {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 0 0 12px
+        }
+
+        .ops label {
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            flex-direction: column;
+            gap: 4px
+        }
+
+        .ops input {
+            width: 80px;
+            font: inherit;
+            padding: 6px 8px;
+            border: 1px solid var(--border);
+            border-radius: 8px
+        }
+
+        .seq {
+            font-family: ui-monospace, Consolas, monospace;
+            font-size: 14px;
+            margin: 6px 0
+        }
+
+        ol {
+            margin: 8px 0 0;
+            padding-left: 20px;
+            font-size: 14px
+        }
+
+        @media(max-width:520px) {
+            .g1 {
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>Мультиварка: вибір режиму приготування</h1>
+        <p class="sub">Лабораторна робота № 2 · Людино-машинна взаємодія · три варіанти інтерфейсу</p>
+        <div class="tabs" id="tabs"></div>
+        <div class="chk" role="radiogroup" aria-label="Підсвічування законів">
+            <label><input type="radio" name="law" value="" checked> Без підсвічування</label>
+            <label><input type="radio" name="law" value="fitts"> Закон Фітса</label>
+            <label><input type="radio" name="law" value="hick"> Закон Хіка</label>
+        </div>
+        <div id="app"></div>
+        <section id="goms"></section>
+    </main>
+    <script>
+        const MODES = [
+            { n: 'Рис', t: 20, c: 100 }, { n: 'Каша молочна', t: 30, c: 95 }, { n: 'Суп', t: 40, c: 100 }, { n: 'Гречка', t: 20, c: 100 },
+            { n: 'Плов', t: 45, c: 110 }, { n: 'Тушкування', t: 60, c: 95 }, { n: 'Смаження', t: 20, c: 160 }, { n: 'Випічка', t: 50, c: 150 },
+            { n: 'Парова варка', t: 25, c: 100 }, { n: 'Йогурт', t: 480, c: 40 }, { n: 'Варіння', t: 30, c: 100 }, { n: 'Підтримка тепла', t: 60, c: 70 }];
+        const GROUPS = [['Крупи й каші', [0, 1, 3, 4]], ['Основні страви', [2, 5, 6, 10]], ['Спеціальні', [7, 8, 9, 11]]];
+        const CATS = [
+            { n: 'Каші', d: [['Гречана каша', 'Гречка', 25], ['Рисова каша', 'Рис', 25], ['Вівсянка', 'Каша молочна', 20], ['Молочна каша', 'Каша молочна', 30], ['Плов', 'Плов', 45]] },
+            { n: 'Супи', d: [['Борщ', 'Суп', 60], ['Курячий суп', 'Суп', 45], ['Гороховий суп', 'Суп', 80]] },
+            { n: "М'ясо", d: [['Гуляш', 'Тушкування', 90], ['Котлети на пару', 'Парова варка', 30], ['Курка', 'Смаження', 35]] },
+            { n: 'Випічка', d: [['Шарлотка', 'Випічка', 55], ['Бісквіт', 'Випічка', 60], ['Хліб', 'Випічка', 90]] },
+            { n: 'Десерти', d: [['Йогурт', 'Йогурт', 480], ['Рисовий пудинг', 'Каша молочна', 35]] },
+            { n: 'Інше', d: [['Варені яйця', 'Варіння', 15], ['Підігрів страви', 'Підтримка тепла', 30]] }];
+        const NAMES = { 1: 'Сенсорна сітка', 2: 'Ручка й дисплей', 3: 'Покроковий майстер' };
+        const SEQ = { 1: 'H M P K M P K P K', 2: 'H M Rt Rt Rt K M Rt K P K', 3: 'H M P K M P K M P K' };
+        const OPS = { H: 0.4, M: 1.35, P: 1.1, K: 0.2, Rt: 0.3 };
+        const S = {
+            v: 1,
+            v1: { scr: 'home', mode: 0, time: 20 },
+            v2: { stage: 'mode', idx: 0, time: 20, run: false, err: '' },
+            v3: { scr: 'cat', cat: 0, dish: 0, time: 25 }
+        };
+        const app = document.getElementById('app');
+        const tabs = document.getElementById('tabs');
+        const gomsEl = document.getElementById('goms');
+        const byName = n => MODES.find(m => m.n === n);
+        const clamp = t => Math.max(5, Math.min(480, t));
+        const fmt = n => n.toFixed(2).replace('.', ',');
+        const ft = m => { const h = Math.floor(m / 60), mm = m % 60; return ((h ? h + ' г ' : '') + ((mm || !h) ? mm + ' хв' : '')).trim() };
+        const total = v => SEQ[v].split(' ').reduce((a, o) => a + OPS[o], 0);
+
+        function stepper(act, time) {
+            return `<div class="stp"><button data-act="${act}" data-arg="-5" aria-label="Зменшити час">−</button><div>${ft(time)}</div><button data-act="${act}" data-arg="5" aria-label="Збільшити час">+</button></div>`
+        }
+
+        function variant1() {
+            const s = S.v1;
+            let h = '';
+            if (s.scr === 'home') {
+                h = '<h2>Оберіть режим</h2>';
+                GROUPS.forEach(g => {
+                    h += `<div class="lbl" data-law="hick" data-label="Хік: 3 групи по 4">${g[0]}</div><div class="g1" data-law="fitts" data-label="Фітс: великі цілі">` +
+                        g[1].map(i => `<button class="big" data-act="m1" data-arg="${i}">${MODES[i].n}</button>`).join('') + '</div>'
+                });
+            } else if (s.scr === 'set') {
+                const m = MODES[s.mode];
+                h = `<button data-act="bk1">← Режими</button><h2 style="margin-top:12px">${m.n}</h2><div class="lbl">Час приготування</div>${stepper('t1', s.time)}<div class="lbl">Температура: ${m.c} °C</div><div style="margin-top:18px" data-law="fitts" data-label="Фітс: найбільша кнопка"><button class="big start" data-act="go1">Старт</button></div>`;
+            } else {
+                const m = MODES[s.mode];
+                h = `<div class="run"><b>Готується: ${m.n}</b><span>${ft(s.time)} · ${m.c} °C</span><button data-act="rs1">Скасувати</button></div>`
+            }
+            return `<div class="dev"><div class="scr">${h}</div></div>`
+        }
+
+        function variant2() {
+            const s = S.v2, m = MODES[s.idx];
+            let l = '';
+            if (s.run) l = `<div>ГОТУЄТЬСЯ</div><div style="font-size:20px;margin:8px 0">${m.n}</div><div>${ft(s.time)} · ${m.c} °C</div>`;
+            else if (s.stage === 'mode') l = `<div>РЕЖИМ ${s.idx + 1}/12</div><div style="font-size:22px;margin:10px 0">◂ ${m.n} ▸</div><div style="letter-spacing:3px">${MODES.map((x, i) => i === s.idx ? '●' : '○').join('')}</div>`;
+            else if (s.stage === 'time') l = `<div>ЧАС (${m.n})</div><div style="font-size:26px;margin:10px 0">${ft(s.time)}</div><div>крок 5 хв · ОК — підтвердити</div>`;
+            else l = `<div>ГОТОВО</div><div style="font-size:18px;margin:8px 0">${m.n} · ${ft(s.time)} · ${m.c} °C</div><div>Натисніть СТАРТ</div>`;
+            const ang = s.stage === 'time' ? (s.time / 5) * 10 : s.idx * 30;
+            const h = `<div class="lcd" data-law="hick" data-label="Хік: показано 1 варіант">${l}</div>
+<div class="knobrow">
+<button data-act="rot" data-arg="-1" aria-label="Повернути ліворуч">⟲</button>
+<div data-law="fitts" data-label="Фітс: ручка 40 мм" style="width:120px;height:120px">
+<svg viewBox="0 0 120 120" width="120" height="120" role="button" aria-label="Натиснути ручку (ОК)" data-act="ok" style="cursor:pointer">
+<circle cx="60" cy="60" r="54" fill="#f1efe8" stroke="#b4b2a9"/>
+<g style="transform-origin:60px 60px;transform:rotate(${ang}deg);transition:transform .2s"><line x1="60" y1="12" x2="60" y2="30" stroke="#185fa5" stroke-width="4" stroke-linecap="round"/></g>
+<circle cx="60" cy="60" r="26" fill="#fff" stroke="#d3d1c7"/>
+<text x="60" y="65" text-anchor="middle" font-size="14" fill="#1f1e1c">OK</text>
+</svg></div>
+<button data-act="rot" data-arg="1" aria-label="Повернути праворуч">⟳</button>
+</div>
+<div style="margin-top:20px" data-law="fitts" data-label="Фітс: окрема велика кнопка"><button class="big start" style="height:52px" data-act="st2">СТАРТ</button></div>
+${s.err ? `<div class="err">${s.err}</div>` : ''}
+<div style="margin-top:10px;text-align:right"><button data-act="rs2">Скинути</button></div>`;
+            return `<div class="dev"><div class="scr">${h}</div></div>`
+        }
+
+        function variant3() {
+            const s = S.v3;
+            let h = '', n = 1;
+            if (s.scr === 'cat') {
+                h = `<h2>Що готуємо?</h2><div class="g3" data-law="hick" data-label="Хік: 6 категорій">` +
+                    CATS.map((c, i) => `<button class="big" style="height:68px" data-act="cat" data-arg="${i}">${c.n}</button>`).join('') + '</div>';
+            } else if (s.scr === 'dish') {
+                n = 2;
+                const c = CATS[s.cat];
+                h = `<button data-act="bk3">← Категорії</button><h2 style="margin:12px 0 8px">${c.n}</h2><div class="list" data-law="hick" data-label="Хік: не більше 5 страв">` +
+                    c.d.map((d, i) => `<button class="dish" data-act="dish" data-arg="${i}"><span>${d[0]}</span><small>${d[1]} · ${ft(d[2])}</small></button>`).join('') + '</div>';
+            } else if (s.scr === 'sum') {
+                n = 3;
+                const d = CATS[s.cat].d[s.dish], m = byName(d[1]);
+                h = `<button data-act="bk3b">← Страви</button><h2 style="margin:12px 0 2px">${d[0]}</h2><div class="lbl" style="margin-top:0">Режим «${d[1]}» підставлено автоматично · ${m.c} °C</div>${stepper('t3', s.time)}<div style="margin-top:14px" data-law="fitts" data-label="Фітс: кнопка на всю ширину"><button class="big start" data-act="go3">Старт</button></div>`;
+            } else {
+                const d = CATS[s.cat].d[s.dish];
+                h = `<div class="run"><b>Готується: ${d[0]}</b><span>${d[1]} · ${ft(s.time)}</span><button data-act="rs3">Скасувати</button></div>`
+            }
+            const bar = s.scr === 'run' ? '' : `<div class="step">Крок ${n} з 3</div>`;
+            return `<div class="dev"><div class="scr">${bar}${h}</div></div>`
+        }
+
+        function gomsOut() {
+            const rows = [1, 2, 3].map(v => ({ v, t: total(v) })).sort((a, b) => a.t - b.t);
+            return `<div class="seq">Варіант ${S.v}: ${SEQ[S.v]} = <b>${fmt(total(S.v))} с</b></div>
+<ol>${rows.map(r => `<li>Варіант ${r.v}. ${NAMES[r.v]}: ${fmt(r.t)} с</li>`).join('')}</ol>
+<div class="lbl">Найефективніший: варіант ${rows[0].v}; найгірший: варіант ${rows[2].v}.</div>`
+        }
+
+        function gomsPanel() {
+            return `<h2>Модель GOMS (KLM)</h2><div class="ops">` +
+                Object.keys(OPS).map(o => `<label>${o}, с<input type="number" min="0" step="0.05" value="${OPS[o]}" data-op="${o}"></label>`).join('') +
+                `</div><div class="err" id="operr"></div><div id="gout">${gomsOut()}</div>`
+        }
+
+        function render() {
+            tabs.innerHTML = [1, 2, 3].map(v => `<button class="tab" aria-pressed="${S.v === v}" data-act="tab" data-arg="${v}">${v}. ${NAMES[v]}</button>`).join('');
+            app.innerHTML = S.v === 1 ? variant1() : S.v === 2 ? variant2() : variant3();
+            gomsEl.innerHTML = gomsPanel()
+        }
+
+        function act(a, g) {
+            const s1 = S.v1, s2 = S.v2, s3 = S.v3;
+            if (a === 'tab') S.v = +g;
+            else if (a === 'm1') { s1.mode = +g; s1.time = MODES[+g].t; s1.scr = 'set' }
+            else if (a === 't1') s1.time = clamp(s1.time + +g);
+            else if (a === 'go1') s1.scr = 'run';
+            else if (a === 'bk1' || a === 'rs1') s1.scr = 'home';
+            else if (a === 'rot') {
+                s2.err = '';
+                if (s2.run) return;
+                if (s2.stage === 'mode') { s2.idx = (s2.idx + +g + 12) % 12; s2.time = MODES[s2.idx].t }
+                else if (s2.stage === 'time') s2.time = clamp(s2.time + 5 * +g)
+            }
+            else if (a === 'ok') {
+                s2.err = '';
+                if (s2.run) return;
+                if (s2.stage === 'mode') s2.stage = 'time';
+                else if (s2.stage === 'time') s2.stage = 'ready'
+            }
+            else if (a === 'st2') {
+                if (s2.stage !== 'ready') s2.err = 'Спочатку виберіть режим і час: повертайте ручку й натискайте ОК.';
+                else { s2.err = ''; s2.run = true }
+            }
+            else if (a === 'rs2') S.v2 = { stage: 'mode', idx: 0, time: MODES[0].t, run: false, err: '' };
+            else if (a === 'cat') { s3.cat = +g; s3.scr = 'dish' }
+            else if (a === 'dish') { s3.dish = +g; s3.time = CATS[s3.cat].d[+g][2]; s3.scr = 'sum' }
+            else if (a === 't3') s3.time = clamp(s3.time + +g);
+            else if (a === 'go3') s3.scr = 'run';
+            else if (a === 'bk3' || a === 'rs3') s3.scr = 'cat';
+            else if (a === 'bk3b') s3.scr = 'dish';
+            render()
+        }
+
+        document.addEventListener('click', e => {
+            const b = e.target.closest('[data-act]');
+            if (b) act(b.getAttribute('data-act'), b.getAttribute('data-arg'))
+        });
+
+        document.addEventListener('input', e => {
+            const op = e.target.getAttribute('data-op');
+            if (!op) return;
+            const v = parseFloat(e.target.value.replace(',', '.'));
+            const err = document.getElementById('operr');
+            if (!(v >= 0)) { err.textContent = 'Введіть невід’ємне число'; return }
+            err.textContent = '';
+            OPS[op] = v;
+            document.getElementById('gout').innerHTML = gomsOut()
+        });
+
+        document.addEventListener('keydown', e => {
+            if (S.v !== 2 || e.target.tagName === 'INPUT') return;
+            if (e.key === 'ArrowLeft') act('rot', '-1');
+            else if (e.key === 'ArrowRight') act('rot', '1');
+            else if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') act('ok')
+        });
+
+        document.querySelectorAll('input[name=law]').forEach(r => r.addEventListener('change', e => {
+            app.classList.remove('show-fitts', 'show-hick');
+            if (e.target.value) app.classList.add('show-' + e.target.value)
+        }));
+
+        render();
+    </script>
+</body>
+
+</html>
